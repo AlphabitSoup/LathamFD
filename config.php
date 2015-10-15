@@ -13,6 +13,7 @@ if (!$dbh) {
 } else {
   // temp
   echo "Success!!";
+  //changed code
 }
 mysql_selectdb(DB_NAME,$dbh);
 ?>

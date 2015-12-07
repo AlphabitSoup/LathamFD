@@ -1,5 +1,7 @@
 <?php
 echo'
+<!DOCTYPE html>
+<html>
 <head>
     <meta charset="UTF-8">
     <title>Latham Fire</title>
@@ -8,7 +10,8 @@ echo'
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 	<link rel="stylesheet" type="text/css" href="common.css">
-
+	</head>
+   <body>  
     <nav role="navigation" class="navbar navbar-default">
     <!-- Brand and toggle get grouped for better mobile display -->
     <div class="navbar-header">
@@ -28,11 +31,10 @@ echo'
             <li><a href="query.php">Query</a></li>
 			
         </ul>
-		<form 
         <ul class="nav navbar-nav navbar-right">
             <li><a href="./login.php">Login</a></li>
         </ul>
     </div>
     </nav>
-</head>';
+';
 ?>

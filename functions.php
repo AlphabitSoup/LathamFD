@@ -424,10 +424,10 @@ function checkPassword() {
   if ($stmt->fetch()) {
     if ($stored_passwd == $submitted_passwd){
 		//FOR STARTING A SESSION, TAKE OUT $_SESSION VARIABLES
-		$_SESSION['admin'] = $admin_type;
-		$_SESSION['userid'] = $user_id;
-		if ($admin_type == 1)
-			header("location: /proj2/admin.php")
+		//$_SESSION['admin'] = $admin_type;
+		//$_SESSION['userid'] = $user_id;
+		//if ($admin_type == 1)
+			//header("location: /proj2/admin.php");
       return true;
 	}
     else

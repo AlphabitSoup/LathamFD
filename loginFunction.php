@@ -2,7 +2,7 @@
 
 require 'functions.php';
 
-$title = 'Ice Cream.com';
+$title = 'Latham FD';
 
 echo createHeader($title);
 

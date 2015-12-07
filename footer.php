@@ -4,5 +4,7 @@ echo'
       <div class="container">
         <p class="text-muted">©AlphabitSoup 2015</p>
       </div>
-</footer>';
+	 
+</footer></body>
+</html>';
 ?>

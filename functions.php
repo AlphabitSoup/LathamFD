@@ -1,6 +1,6 @@
 <?php
-
-session_start();
+require "DBConnect.php";
+//session_start();
 
 
 function createHeader($title) {
@@ -18,6 +18,7 @@ function createHeader($title) {
     <div class="container">
     	<h1>'.$title.'</h1>';
 }	
+
 function createFooter($title) {
   $year = date('Y');
   return '
@@ -208,16 +209,6 @@ function processForm() {
   
   }
   
-  
-function databaseConnect() {
-	$mysqli = new mysqli("localhost", "breimern_orders", "orders1234", "breimern_orders");
-	if ($mysqli->connect_errno) {
-		die("Database connection failed");
-	}
-	else {
-		return $mysqli;
-	}
-}	
 
 
 function displayOrder() {	
@@ -427,7 +418,7 @@ function checkPassword() {
 		//$_SESSION['admin'] = $admin_type;
 		//$_SESSION['userid'] = $user_id;
 		//if ($admin_type == 1)
-			//header("location: /proj2/admin.php");
+			//header("location: /proj2/addFirefighter.php");
       return true;
 	}
     else
@@ -435,8 +426,147 @@ function checkPassword() {
   }
 }
 
-function editTable() {
-	displayTable();
+function addFirefighterForm(){
+	return 
+	'
+	<form method="post" action="addFirefighter.php?action=submit">
+	<h2>Firefighter Add Form</h2>
+	<div class="row">'.		
+	createTextField("fname", "First Name", 256).
+	createTextField("lname", "Last name", 256).
+	createTextField("rank", "Firefighter Rank", 256).
+	'<label class="control-label" >Firefighter Credentials</label>'.
+	createCheckBox("type", "driver", "Driver").
+	createCheckBox("type", "ems", "EMS").
+	createCheckBox("type", "exterior", "Exterior").
+	createCheckBox("type", "hazardous", "Hazardous").
+	createCheckBox("type", "hurst", "Hurst Tools").
+	createCheckBox("type", "interior", "Interior").
+	createCheckBox("type", "paramedic", "Paramedic").
+	createCheckBox("type", "pump", "Pump Operator").
+	'<button type= "submit" class = "btn btn-success">Submit</button>
 	
+	</div>';
+}
+
+function insertFirefighter(){
+
+	//$mysqli = databaseConnect();
+	$type = implode(", ", $_POST['type']);
+	
+
+	if (!($stmt = $mysqli->prepare("INSERT INTO `Firefighter` VALUES (?,?,?)"))) {
+		die("Binding parameters failed: (" . $stmt->errno . ") " . $stmt->error);
+	}		
+	
+	$stmt->bind_param("sss", 
+		$_POST['fname'],
+		$_POST['lname'],
+		$_POST['rank']
+	);
+	
+	if (!$stmt->execute()) {
+  	die("Execute failed: (" . $stmt->errno . ") " . $stmt->error);
+	}
+	
+	if (!($stmt2 = $mysqli->prepare("SELECT ffid FROM `Firefighter` WHERE fname = ? and lname = ? and rank = ?"))) {
+		die("Binding parameters failed: (" . $stmt->errno . ") " . $stmt->error);
+	}	
+	
+	$stmt2->bind_param("sss", 
+		$_POST['fname'],
+		$_POST['lname'],
+		$_POST['rank']
+	);
+	
+	if (!$stmt2->execute()) {
+  	die("Execute failed: (" . $stmt->errno . ") " . $stmt->error);
+	}
+	
+	$ffid = $stm2;
+	
+	if (!($stmt3 = $mysqli->prepare("INSERT INTO `Has` VALUES (??)"))) {
+		die("Binding parameters failed: (" . $stmt->errno . ") " . $stmt->error);
+	}
+	
+	$stmt3->bind_param("is", 
+	    $ffid,
+		$_POST[$type]		
+	);
+
+	if (!$stmt3->execute()) {
+  	die("Execute failed: (" . $stmt->errno . ") " . $stmt->error);
+	}
+	
+	$stmt->close();
+	$stmt2->close();
+	$stmt3->close();
+	$mysqli->close();
+}
+
+function processFirefighter (){
+	$fieldMissing = false;
+	foreach ($_POST as $key => $value) {
+			if ($value == null)  {
+				$_POST[$key] = "!missing!";
+				$fieldMissing = true;
+			}
+	}
+	
+	
+	if ($fieldMissing) {
+		return addFirefighterForm();
+	}
+	else {
+		return insertFirefighter();
+	}
+}
+
+function editTable(){
+$query = "SELECT * FROM $table WHERE status='$status'";
+	$result = $mysqli->query($query);
+	$finfo = $result->fetch_fields();
+		
+	$output = '<table class="table table-bordered">';
+	$output .= '<thead><tr><th>Actions</th>';
+	foreach ($finfo as $field) {
+		$output .= '<th>'.$field->name.'</th>';
+	}
+	$output .= '</tr></thead><tbody>';
+	while ($row = $result->fetch_row()) {
+		$output .= '<tr><td><a class = "btn btn-danger" href="deleteOrder.php?id='.$row[0].'">Delete</a></td>';
+		
+		
+		foreach ($row as $val) {
+			$output .= '<td>'.$val.'</td>';
+		}
+		$output .= '</tr>';
+	}
+	$output .= '</tbody></table>';
+
+	$result->free();
+	$mysqli->close();
+	return $output;
+}
+
+function deleteFirefighter(){
+$query = "DELETE FROM Firefighter WHERE ffid=?";
+if (!($stmt = $mysqli->prepare($query))) {
+		die("Binding parameters failed: (" . $stmt->errno . ") " . $stmt->error);
+	}
+	
+	// 8. There are 10 parameter, the first 8 are strings, the 9th is an integer, the 10th is a string		
+	
+	$stmt->bind_param("i", $id);
+
+  // 9. Once the query is prepared, we can execute it
+  
+  if (!$stmt->execute()) {
+  	die("Execute failed: (" . $stmt->errno . ") " . $stmt->error);
+	}
+
+	$stmt->close();
+	$mysqli->close();
+
 }
 ?>

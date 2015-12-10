@@ -12,7 +12,7 @@
 	     session_start();
 		 
 		 $_SESSION['loggedin'] = true;
-	     header('Location: ./trucks.php');
+	     header('Location: ./addFirefighter.php');
 	  }
 	  else{
 		  header('Location: ./login.php');

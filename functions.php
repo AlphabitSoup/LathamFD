@@ -455,7 +455,7 @@ function insertFirefighter(){
 	$type = implode(", ", $_POST['type']);
 	
 
-	if (!($stmt = $mysqli->prepare("INSERT INTO `Firefighter` VALUES (?,?,?)"))) {
+	if (!($stmt = $mysqli->prepare("INSERT INTO `Firefighter` VALUES (DEFAULT,?,?,?)"))) {
 		die("Binding parameters failed: (" . $stmt->errno . ") " . $stmt->error);
 	}		
 	
@@ -483,9 +483,12 @@ function insertFirefighter(){
   	die("Execute failed: (" . $stmt->errno . ") " . $stmt->error);
 	}
 	
-	$ffid = $stm2;
+	$stmt2->bind_result($ffid);
+	$stmt2->fetch();
 	
-	if (!($stmt3 = $mysqli->prepare("INSERT INTO `Has` VALUES (??)"))) {
+
+	
+	if (!($stmt3 = $mysqli->prepare("INSERT INTO `Has` VALUES (?,?, null, null)"))) {
 		die("Binding parameters failed: (" . $stmt->errno . ") " . $stmt->error);
 	}
 	

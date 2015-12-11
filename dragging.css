@@ -1,0 +1,21 @@
+#sortable1, #sortable2, #sortable3,
+#sortable4, #sortable5, #sortable6, #sortable7{
+    border: 1px solid #990000;
+    width: 142px;
+    min-height: 20px;
+    list-style-type: none;
+
+    margin-left: 27px;
+    padding: 5px 0 0 0;
+    float: left;
+    margin-right: 10px;
+  }
+#sortable1 li, #sortable2 li, #sortable3 li, 
+#sortable4 li, #sortable5 li, #sortable6 li, #sortable7 li{
+    margin: 0 5px 5px 5px;
+    padding: 3px;
+    font-size: 12px;
+    font-weight: bold;
+    width: 120px;
+    text-align: center;
+  }

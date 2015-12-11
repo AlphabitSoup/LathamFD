@@ -11,7 +11,9 @@ if (!$dbh) {
 mysql_selectdb(DB_NAME,$dbh);
 session_start();
 
-echo'<form  method="post">
+echo'
+<h1>Latham Fire</h1>
+<form  method="post">
 <div class="dropdown">
   <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Cert Types
   <span class="caret"></span></button>
@@ -27,9 +29,28 @@ echo'<form  method="post">
     <li><a href="#" name="Pump">Pump</a></li>
   </ul>
 </div>
-</form>
-
+</form> 
+  
 <div id="result">
+</div>
+
+<div id="sortable2" class="connectedSortable">
+</div>
+  
+<div id="sortable3" class="connectedSortable">
+</div>
+    
+<div id="sortable4" class="connectedSortable">
+</div>
+
+    
+<div id="sortable5" class="connectedSortable">
+</div>
+
+<div id="sortable6" class="connectedSortable">
+</div>
+    
+    <div id="sortable7" class="connectedSortable">
 </div>';
 
 
@@ -57,5 +78,16 @@ require('./footer.php');
                 }
             });
    });
+   
+
+	  
+
 });
+
+
+$(function() {
+		$( "#sortable1, #sortable2, #sortable3, #sortable4, #sortable5, #sortable6, #sortable7" ).sortable({
+		  connectWith: ".connectedSortable"
+		}).disableSelection();
+	  });
 </script>

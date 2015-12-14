@@ -1,6 +1,6 @@
 <?php
 require "DBConnect.php";
-//session_start();
+session_start();
 
 
 function createHeader($title) {
@@ -137,6 +137,15 @@ function createCheckBox($id, $value, $label) {
   </div> ';
 }
 
+function databaseConnect() {
+	$mysqli = new mysqli("oraserv.cs.siena.edu", "perm_alphabit", "dour=punish-guild", "perm_alphabit");
+	if ($mysqli->connect_errno) {
+		die("Database connection failed");
+	}
+	else {
+		return $mysqli;
+	}
+}	
 
 function insertOrder($q) {
 
@@ -450,14 +459,17 @@ function addFirefighterForm(){
 }
 
 function insertFirefighter(){
-
-	//$mysqli = databaseConnect();
+	var_dump($_POST);
+	$mysqli = databaseConnect();
 	$type = implode(", ", $_POST['type']);
 	
+	echo "here1";
 
 	if (!($stmt = $mysqli->prepare("INSERT INTO `Firefighter` VALUES (DEFAULT,?,?,?)"))) {
 		die("Binding parameters failed: (" . $stmt->errno . ") " . $stmt->error);
-	}		
+	}
+
+    echo "here2";
 	
 	$stmt->bind_param("sss", 
 		$_POST['fname'],
@@ -465,9 +477,13 @@ function insertFirefighter(){
 		$_POST['rank']
 	);
 	
+	echo "here3";
+	
 	if (!$stmt->execute()) {
   	die("Execute failed: (" . $stmt->errno . ") " . $stmt->error);
 	}
+	
+	die("Got here");
 	
 	if (!($stmt2 = $mysqli->prepare("SELECT ffid FROM `Firefighter` WHERE fname = ? and lname = ? and rank = ?"))) {
 		die("Binding parameters failed: (" . $stmt->errno . ") " . $stmt->error);
@@ -526,7 +542,8 @@ function processFirefighter (){
 }
 
 function editTable(){
-$query = "SELECT * FROM $table WHERE status='$status'";
+$mysqli = databaseConnect();
+$query = "SELECT * FROM Firefighter";
 	$result = $mysqli->query($query);
 	$finfo = $result->fetch_fields();
 		
@@ -537,7 +554,7 @@ $query = "SELECT * FROM $table WHERE status='$status'";
 	}
 	$output .= '</tr></thead><tbody>';
 	while ($row = $result->fetch_row()) {
-		$output .= '<tr><td><a class = "btn btn-danger" href="deleteOrder.php?id='.$row[0].'">Delete</a></td>';
+		$output .= '<tr><td><a class = "btn btn-danger" href="deleteFirefighter.php?id='.$row[0].'">Delete</a></td>';
 		
 		
 		foreach ($row as $val) {
@@ -552,18 +569,17 @@ $query = "SELECT * FROM $table WHERE status='$status'";
 	return $output;
 }
 
-function deleteFirefighter(){
-$query = "DELETE FROM Firefighter WHERE ffid=?";
-if (!($stmt = $mysqli->prepare($query))) {
+function deleteFirefighter($id){
+	$mysqli = databaseConnect();
+	$query = "DELETE FROM `Firefighter` WHERE ffid=?";
+	if (!($stmt = $mysqli->prepare($query))) {
 		die("Binding parameters failed: (" . $stmt->errno . ") " . $stmt->error);
 	}
 	
-	// 8. There are 10 parameter, the first 8 are strings, the 9th is an integer, the 10th is a string		
-	
-	$stmt->bind_param("i", $id);
+	$stmt->bind_param("i", 
+	$id
+	);
 
-  // 9. Once the query is prepared, we can execute it
-  
   if (!$stmt->execute()) {
   	die("Execute failed: (" . $stmt->errno . ") " . $stmt->error);
 	}

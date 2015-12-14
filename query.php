@@ -2,6 +2,7 @@
 //require('./pickCert.js');
 require('./header.php');
 require('DBConnect.php');
+//require 'credCheck.php';
  
 $dbh = mysql_connect(DB_SERVER.':'.DB_PORT,DB_USERNAME,DB_PASSWORD);
 if (!$dbh) {

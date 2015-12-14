@@ -30,8 +30,9 @@
     <div id="navbarCollapse" class="collapse navbar-collapse">
         <ul class="nav navbar-nav">
             <li class="active"><a href="./index.php">Latham Fire Department <span class="glyphicon glyphicon-home"></span></a></li>
-            <li><a href="trucks.php">Trucks</a></li>
-            <li><a href="query.php">Query</a></li>
+            <li><a href="query.php">Trucks</a></li>
+            <li><a href="addFirefighter.php">Add Firefighter</a></li>
+			<li><a href="displayFirefighter.php">Display Firefighters</a></li>
 			
         </ul>
         <ul class="nav navbar-nav navbar-right">

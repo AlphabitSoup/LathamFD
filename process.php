@@ -12,7 +12,7 @@
 	     session_start();
 		 
 		 $_SESSION['loggedin'] = true;
-	     header('Location: ./addFirefighter.php');
+	     header('Location: ./displayFirefighter.php');
 	  }
 	  else{
 		  header('Location: ./login.php');

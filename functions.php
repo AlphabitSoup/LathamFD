@@ -818,4 +818,67 @@ function createEditedOptionSelect($id, $start, $end, $selected) {
 	$output .= '</select>';
 	return $output;
 }
+
+
+
+// stuff for call table
+function displayCallTable() {
+
+    $mysqli = databaseConnect();
+    $query = "SELECT * FROM CallInfo ORDER BY time_of_call";
+
+    // 3. Run the query.  Prepared queries must be executed.  But hardcoded queries can be run with one function call
+    // $results is a pointer to the query's output
+    $result = $mysqli->query($query);
+
+    // 4. Fetch the fields that the query returned
+    // $finfo is an object that stores all the field information
+
+    $finfo = $result->fetch_fields();
+
+    $output = '<table border="1">';
+
+    $output .= '<thead><tr>';
+    foreach ($finfo as $field) {
+	$output .= '<th>&nbsp'.$field->name.'&nbsp</th>';
+    }
+    $output .= '</tr></thead><tbody>';
+
+    // 7. Fetch each row of the query result to make an HTML row
+
+    while ($row = $result->fetch_row()) {
+	$output .= '<tr>';
+
+	// 8. Loop for each column and make an HTML table data column
+	foreach ($row as $val) {
+	    $output .= '<td>&nbsp'.$val.'&nbsp</td>';
+	}
+	$output .= '</tr>';
+    }
+    $output .= '</tbody></table>';
+
+    $result->free();
+    $mysqli->close();
+    return $output;
+}
+
+function addToCallTable($address, $fire_type, $time_of_call,
+                        $responding_unit, $truck_leaves,
+                        $truck_arrives) {
+
+    $mysqli = databaseConnect();
+
+    $insert_query = "INSERT INTO CallInfo VALUES (" . $address
+                  . ", " . $fire_type . ", " . $time_of_call
+                  . ", " . $responding_unit . ", "
+                  . $truck_leaves . ", " . $truck_arrives . ")";
+
+    if (!$mysqli->query($insert_query)) {
+        echo 'Table insert failed: (' . $mysqli->errno . ') ' . $mysqli->error;
+    }
+}
+
+
+
+// end stuff for call info
 ?>

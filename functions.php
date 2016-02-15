@@ -445,31 +445,31 @@ function addFirefighterForm(){
 	createTextField("lname", "Last name", 256).
 	createTextField("rank", "Firefighter Rank", 256).
 	'<label class="control-label" >Firefighter Credentials</label>'.
-	createCheckBox("type", "driver", "Driver").
-	createCheckBox("type", "ems", "EMS").
-	createCheckBox("type", "exterior", "Exterior").
-	createCheckBox("type", "hazardous", "Hazardous").
-	createCheckBox("type", "hurst", "Hurst Tools").
-	createCheckBox("type", "interior", "Interior").
-	createCheckBox("type", "paramedic", "Paramedic").
-	createCheckBox("type", "pump", "Pump Operator").
+	createCheckBox("type", "Driver", "Driver").
+	createCheckBox("type", "EMS", "EMS").
+	createCheckBox("type", "Exterior", "Exterior").
+	createCheckBox("type", "Hazardous", "Hazardous").
+	createCheckBox("type", "Hurst Tools", "Hurst Tools").
+	createCheckBox("type", "Interior", "Interior").
+	createCheckBox("type", "Paramedic", "Paramedic").
+	createCheckBox("type", "Pump", "Pump Operator").
 	'<button type= "submit" class = "btn btn-success">Submit</button>
 	
 	</div>';
 }
 
 function insertFirefighter(){
-	var_dump($_POST);
+	//var_dump($_POST);
 	$mysqli = databaseConnect();
 	$type = implode(", ", $_POST['type']);
 	
-	echo "here1";
+	//echo "here1";
 
-	if (!($stmt = $mysqli->prepare("INSERT INTO `Firefighter` VALUES (DEFAULT,?,?,?)"))) {
+	if (!($stmt = $mysqli->prepare("INSERT INTO `Firefighter` VALUES (DEFAULT,?,?,?,'0')"))) {
 		die("Binding parameters failed: (" . $stmt->errno . ") " . $stmt->error);
 	}
 
-    echo "here2";
+   // echo "here2";
 	
 	$stmt->bind_param("sss", 
 		$_POST['fname'],
@@ -477,15 +477,16 @@ function insertFirefighter(){
 		$_POST['rank']
 	);
 	
-	echo "here3";
+	//echo "here3";
 	
 	if (!$stmt->execute()) {
   	die("Execute failed: (" . $stmt->errno . ") " . $stmt->error);
 	}
+	$stmt->close();
 	
-	die("Got here");
+	//echo "Got here";
 	
-	if (!($stmt2 = $mysqli->prepare("SELECT ffid FROM `Firefighter` WHERE fname = ? and lname = ? and rank = ?"))) {
+	if (!($stmt2 = $mysqli->prepare("SELECT ffid FROM `Firefighter` WHERE fname = ? and lname = ? and rank = ? and active = '0'"))) {
 		die("Binding parameters failed: (" . $stmt->errno . ") " . $stmt->error);
 	}	
 	
@@ -501,25 +502,32 @@ function insertFirefighter(){
 	
 	$stmt2->bind_result($ffid);
 	$stmt2->fetch();
-	
-
-	
-	if (!($stmt3 = $mysqli->prepare("INSERT INTO `Has` VALUES (?,?, null, null)"))) {
-		die("Binding parameters failed: (" . $stmt->errno . ") " . $stmt->error);
-	}
-	
-	$stmt3->bind_param("is", 
-	    $ffid,
-		$_POST[$type]		
-	);
-
-	if (!$stmt3->execute()) {
-  	die("Execute failed: (" . $stmt->errno . ") " . $stmt->error);
-	}
-	
-	$stmt->close();
 	$stmt2->close();
-	$stmt3->close();
+	
+	//echo ("Got here2");
+	
+	foreach ($_POST["type"] as $t) {
+		
+		// $ffid.",";
+		//echo $t;
+		if (!($stmt3 = $mysqli->prepare("INSERT INTO `Has` VALUES (?,?, NULL, NULL)"))) {
+			die("Binding parameters failed: (" . $stmt->errno . ") " . $stmt->error);
+		}
+		
+		$stmt3->bind_param("ss", 
+			$ffid,
+			$t		
+		);
+
+		if (!$stmt3->execute()) {
+		die("Execute failed: (" . $stmt->errno . ") " . $stmt->error);
+		}
+		$stmt3->close();
+	}
+	
+	
+	
+	
 	$mysqli->close();
 }
 
@@ -554,8 +562,8 @@ $query = "SELECT * FROM Firefighter";
 	}
 	$output .= '</tr></thead><tbody>';
 	while ($row = $result->fetch_row()) {
-		$output .= '<tr><td><a class = "btn btn-danger" href="deleteFirefighter.php?id='.$row[0].'">Delete</a></td>';
-		
+		$output .= '<tr><td><a class = "btn btn-danger" href="deleteFirefighter.php?id='.$row[0].'"><span class = "glyphicon glyphicon-remove"></span></a>';
+		$output .= '<a class = "btn btn-sm btn-warning" href="editFirefighter.php?id='.$row[0].'"><span class = "glyphicon glyphicon-edit"></span></a></td>';
 		
 		foreach ($row as $val) {
 			$output .= '<td>'.$val.'</td>';
@@ -571,7 +579,26 @@ $query = "SELECT * FROM Firefighter";
 
 function deleteFirefighter($id){
 	$mysqli = databaseConnect();
+	
+	//foreach ($_POST["type"] as $t) {
+
+		if (!($stmt3 = $mysqli->prepare("DELETE FROM `Has` WHERE ffid=?"))) {
+			die("Binding parameters failed: (" . $stmt->errno . ") " . $stmt->error);
+		}
+		
+		$stmt3->bind_param("i", 
+			$id
+		);
+
+		if (!$stmt3->execute()) {
+		die("Execute failed: (" . $stmt->errno . ") " . $stmt->error);
+		}
+		$stmt3->close();
+		
+	//}
+	
 	$query = "DELETE FROM `Firefighter` WHERE ffid=?";
+	echo $id;
 	if (!($stmt = $mysqli->prepare($query))) {
 		die("Binding parameters failed: (" . $stmt->errno . ") " . $stmt->error);
 	}
@@ -587,5 +614,208 @@ function deleteFirefighter($id){
 	$stmt->close();
 	$mysqli->close();
 
+}
+
+/*
+function editFirefighter($id){
+	getFirefighter($id);
+	
+	$title = 'Latham FD';
+
+	echo createHeader($title);
+
+	echo createEditedForm($id);
+	
+
+
+	echo createFooter($title);
+}*/
+
+function getFirefighter($id){
+	$mysqli = databaseConnect();
+	$query1 = "SELECT * from `Firefighter` AS F, `Has` AS H where F.ffid =? AND H.ffid =?";
+	if (!($stmt = $mysqli->prepare($query1))) {
+		die("Binding parameters failed: (" . $stmt->errno . ") " . $stmt->error);
+	}
+	$stmt->bind_param("ss", $id, $id);
+	if (!$stmt->execute()) {
+  		die("Execute failed: (" . $stmt->errno . ") " . $stmt->error);
+	}
+/*
+	if (!$stmt->execute()) {
+  		die("Execute failed: (" . $stmt->errno . ") " . $stmt->error);
+	}
+*/	
+
+	$stmt->bind_result( 
+		$row['ffid'],
+		$row['fname'],
+		$row['lname'],
+		$row['rank'],
+		$row['active'],
+		$row["type"]		
+	);
+	$stmt->fetch();
+	$row['type'] = explode(", ", $row['type']);
+
+	$stmt->close();
+	$mysqli->close();
+
+	return $row;
+}
+
+function updateFirefighter($id){
+	$mysqli = databaseConnect();
+	
+	$type = implode(", ", $row['type']);
+
+	$query2 = "UPDATE `Firefighter` SET fname = ?, lname=?, rank=? WHERE ffid = ?";
+	if (!($stmt = $mysqli->prepare($query2))) {
+		die("Binding parameters failed: (" . $stmt->errno . ") " . $stmt->error);
+	}
+	$stmt->bind_param("ssss",
+		$row['fname'],
+		$row['lname'],
+		$row['rank'],
+		$id
+	);
+	
+/*  Need another query for the `Has` table??? */
+	
+	if (!$stmt->execute()) {
+  		die("Execute failed: (" . $stmt->errno . ") " . $stmt->error);
+	}
+
+	$stmt->close();
+	
+	var_dump($_POST["type"]);
+	foreach ($_POST["type"] as $t) {
+
+		if (!($stmt3 = $mysqli->prepare("UPDATE `Has` SET type = ? WHERE ffid = ?"))) {
+			die("Binding parameters failed: (" . $stmt->errno . ") " . $stmt->error);
+		}
+		
+		$stmt3->bind_param("ss", 
+			$t,
+			$id		
+		);
+
+		if (!$stmt3->execute()) {
+		die("Execute failed: (" . $stmt->errno . ") " . $stmt->error);
+		}
+		$stmt3->close();
+	}
+	
+	$mysqli->close();
+}
+
+function createEditForm(){
+	return 
+		'
+		<form method="post" action="editFirefighter.php?action=submit">
+		<h2>Firefighter Edit Form</h2>
+		<div class="row">'.		
+		createTextField("fname", "First Name", 256).
+		createTextField("lname", "Last name", 256).
+		createTextField("rank", "Firefighter Rank", 256).
+		'<label class="control-label" >Firefighter Credentials</label>'.
+		createCheckBox("type", "Driver", "Driver").
+		createCheckBox("type", "EMS", "EMS").
+		createCheckBox("type", "Exterior", "Exterior").
+		createCheckBox("type", "Hazardous", "Hazardous").
+		createCheckBox("type", "Hurst Tools", "Hurst Tools").
+		createCheckBox("type", "Interior", "Interior").
+		createCheckBox("type", "Paramedic", "Paramedic").
+		createCheckBox("type", "Pump", "Pump Operator").
+		'<button type= "submit" class = "btn btn-success">Submit</button>
+	
+		</div>';
+}
+
+function createEditedForm($id){
+	return '
+   <form method="post" action="updateAdmin.php?action=submit&id='.$id.'">
+   <h2>Firefighter Info</h2>
+   <div class="row">'.	   
+   createEditedTextField("fname", "First Name", 256, $_POST["fname"]).
+   createEditedTextField("lname", "Last name", 256, $_POST["lname"]).
+   createEditedTextField("rank", "Firefighter Rank", 256, $_POST["rank"]).
+   '</div>
+   
+   <div class="row"><div class="col-sm-4"><h2>Credentials</h2>'.
+   createCredentialsCheckBox().
+   '</div>
+      
+   
+   <button type="submit" class = "btn btn-success">Update</button>
+   </form>';
+
+}
+
+function createEditedTextField($name, $label, $size, $value){
+	//error handling - styles the text fields using Bootstrap if the $id field is equal to !missing! 
+	$errorClass = null;
+	$errorSpan = null;
+	if($_POST[$id] == "!missing!"){
+		$errorClass = " has-error";
+		$errorSpan = '<span class="help-block">Field must not be blank.</span>';
+	}
+
+  	return '
+  	<div class="col-sm-'.$size.'">	
+    <div class="form-group'.$errorClass.'">
+     <label class="control-label" for="'.$id.'">'.$label.$errorSpan.'</label>
+     <input type="text" class="form-control" id="'.$name.'" name="'.$name.'" value="'.$value.'">
+    </div>
+   	</div>';	
+}
+
+function createCredentialsCheckBox(){
+	$possibleValues['Driver'] = false;
+	$possibleValues['EMS'] = false;
+	$possibleValues['Exterior'] = false;
+	$possibleValues['Hazardous'] = false;
+	$possibleValues['Hurst Tools'] = false;
+	$possibleValues['Interior'] = false;
+	$possibleValues['Paramedic'] = false;
+	$possibleValues['Pump Operator'] = false;
+	$selectedValues = explode(", ", $_POST["type"]);
+
+	foreach ($selectedValues as $s) {
+  		$possibleValues[$s] = true;
+	}
+
+	foreach ($possibleValues as $key => $value) {
+  		$selected = "";
+  		if ($value == true){
+    		$selected = "checked";
+		}
+  		$output .= createEditedCheckBox("type", $key, $key, $selected);
+	}
+	return $output;	
+}
+
+function createEditedCheckBox($id, $value, $label, $selected){
+	return '	
+  <div class="checkbox">
+    <label>
+      <input type="checkbox" name="'.$id.'[]" id="'.$id.'" value="'.$value.'" '.$selected.' > '.$label.'
+    </label>
+  </div> ';	
+}
+
+/* Not sure if needed as of right now (2/3/16)*/
+function createEditedOptionSelect($id, $start, $end, $selected) {
+	$output = '<select class="form-control" name="'.$id.'" id="'.$id.'">';
+	for ($i = $start; $i <= $end; $i++){
+		if ($i == $selected){
+			$output .= '<option value="'.$i.'" selected>'.$i.'</option>';
+		}
+		else{
+			$output .= '<option value="'.$i.'">'.$i.'</option>';
+		}
+	}
+	$output .= '</select>';
+	return $output;
 }
 ?>

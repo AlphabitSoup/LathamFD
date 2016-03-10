@@ -1,7 +1,12 @@
 <?php
+if (empty($_SESSION['loggedin'])) {
+  header('Location: ./login.php');
+}
+
 //require('./pickCert.js');
 require('./header.php');
 require('DBConnect.php');
+require('./fireInformation.php');
 //require 'credCheck.php';
  
 $dbh = mysql_connect(DB_SERVER.':'.DB_PORT,DB_USERNAME,DB_PASSWORD);
@@ -11,8 +16,8 @@ if (!$dbh) {
 }
 mysql_selectdb(DB_NAME,$dbh);
 session_start();
+?>
 
-echo'
 <h1>Latham Fire</h1>
 <form  method="post">
 <div class="dropdown">
@@ -52,18 +57,10 @@ echo'
 </div>
     
     <div id="sortable7" class="connectedSortable">
-</div>';
+</div>
 
-
-
-
-
-
-
-
-
+<?php
 require('./footer.php');
-
 ?>
 
 

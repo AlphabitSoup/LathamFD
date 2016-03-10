@@ -1,84 +1,25 @@
 <?php
+/**
+ * functions for adding, editing, deleting, connecting to
+ * Alphabit Soup database. Also functions to make forms
+ * that will add and edit the database. And functions to
+ * verify login information.
+ *
+ *@author Alphabit Soup
+ */
 require "DBConnect.php";
 session_start();
 
-
-function createHeader($title) {
-  return '
-  <!DOCTYPE html>
-  <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>'.$title.'</title>
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
-  </head>
-  <body>
-    <div class="container">
-    	<h1>'.$title.'</h1>';
-}	
-
-function createFooter($title) {
-  $year = date('Y');
-  return '
-    <footer>Copyright '.$year.' '.$title.'</footer>
-    </div><!-- /.container -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-  </body>
-  </html>';
-}
-
-function createForm() {	
-  return '
-   <form method="post" action="form.php?action=submit">
-   <h2>Customer Info</h2>
-   <div class="row">'.		
-   createTextField("cust_name", "Name", 8).
-   createTextField("cust_phone", "Phone", 4).
-   createTextField("cust_address", "Address", 12).
-   createTextField("cust_city", "City", 6).
-   createTextField("cust_state", "State", 2).
-   createTextField("cust_zip", "Zip", 4).
-   '</div>
-   
-   <div class="row"><div class="col-sm-4"><h2>Scoop Size</h2>'.
-   createRadioButton("scoop", "small" , "One"). 
-   createRadioButton("scoop", "med" , "Two"). 
-   createRadioButton("scoop", "lg" , "Three"). 
-   '</div>
-   
-   <div class="col-sm-4"><h2>Container Type</h2>'.
-   createRadioButton("container", "cup" , "Cup"). 
-   createRadioButton("container", "cone" , "Cone"). 
-   '</div>
-   
-   <div class ="col-sm-2"><h2>Quantity</h2>'.	
-   	createOptionSelect("drop", 1 , 10).
-   '</div></div>
-   
-   <div class="row"><div class="col-sm-4"><h2>Sprinkles</h2>'.
-   createCheckBox("Topping", "rainbow" , "Rainbow Sprinkles"). 
-   createCheckBox("Topping", "chocolate" , "Chocolate Sprinkles"). 
-   createCheckBox("Topping", "white" , "White Chocolate Sprinkles"). 
-   '</div>
-   
-   <div class="col-sm-4"><h2>Candy Topping</h2>'.
-   createCheckBox("Candy", "mm" , "M&amp;M's"). 
-   createCheckBox("Candy", "pieces" , "Reeses Pieces"). 
-   createCheckBox("Candy", "reeses" , "Reeses"). 
-   createCheckBox("Candy", "oreos" , "Oreos"). 
-   createCheckBox("Candy", "gummy" , "Gummy Bears"). 
-   '</div></div>
-   
-   
-   <button type="submit" class = "btn btn-success">Submit</button>
-   </form>';
-}
-
-
-
+/**
+ * function to create a text box to apply within a form
+ *
+ * @param string $id the name of the attribute in the database
+ * @param string $label the name of the text to display
+ *				for the text box
+ * @param int $size the length of the text field
+ *
+ * @return the text field on the form 
+ */
 function createTextField($id, $label, $size) {
 	//error handling - styles the text fields using Bootstrap if the $id field is equal to !missing! 
 	$errorClass = null;
@@ -99,35 +40,18 @@ function createTextField($id, $label, $size) {
    </div>';	
 }
 
-function createOptionSelect($id, $start, $end) {
-	$output = '<select class="form-control" name="'.$id.'" id="'.$id.'">';
-	for ($i = $start; $i <= $end; $i++)
-		$output .= '<option value="'.$i.'">'.$i.'</option>';
-	$output .= '</select>';
-	return $output;
-}
-
-
-
-function createRadioButton($id, $value, $label) {
- $errorClass = null;
- $errorSpan = null;
- if ($_POST[$id] == "!missing!") {
-  $errorClass = " has-error";
-  $errorSpan = '<span class="help-block">'.$id.' Type must be entered.</span>';
- }
- return '
-  <div class="form-group'.$errorClass.'">	
-  <div class="radio">
-    <label>
-      <input type="radio" name="'.$id.'" id="'.$id.'" value="'.$value.'"> '.$label.
-      $errorSpan.'
-    </label>
-  </div>
-  </div> ';
-}
-
-
+/**
+ * function to create a check box to apply within a form
+ *
+ * @param string $id the name of the array the attributes 
+ *				are stored in
+ * @param string $value the name of the attribute in the 
+ *				database
+ * @param string $label the name of the text to display
+ *				for the check box
+ *
+ * @return the check box on the form 
+ */
 function createCheckBox($id, $value, $label) {
  return '	
   <div class="checkbox">
@@ -137,6 +61,13 @@ function createCheckBox($id, $value, $label) {
   </div> ';
 }
 
+/**
+ * function to connect to Alphabit Soup's database with 
+ *			a message to tell whether connection was successful
+ *
+ * @return $mysqli the success or failure of connecting
+ *				  to the database  
+ */
 function databaseConnect() {
 	$mysqli = new mysqli("oraserv.cs.siena.edu", "perm_alphabit", "dour=punish-guild", "perm_alphabit");
 	if ($mysqli->connect_errno) {
@@ -147,265 +78,14 @@ function databaseConnect() {
 	}
 }	
 
-function insertOrder($q) {
-
-	// 1. We have to connect to the database.  $mysqli is a database connection object
-	
-	$mysqli = databaseConnect();
-	
-	// 2. We get the current date and time in the form 2015-10-30 8:30:59 
-	
-	$orderDate = date("Y-m-d H:i:s");
-	
-	// 3. We take the toppings array and convert it to a comma separated string
-	
-	$toppings = implode(", ", $_POST['Topping']);
-	$Candy = implode(", ", $_POST['Candy']);
-	
-	// 4. We prepare the query.  We will insert a row into the table.
-	// 5. The values have to be inserted in the defined order of the table
-	// 6. My table has 11 fields, the first row is an auto-increment id used as the primary key
-	// 7. The other 10 fields come from the posted form. They are all strings except for pizza_quantity
-	
-	if (!($stmt = $mysqli->prepare("INSERT INTO `am8orders` VALUES (DEFAULT,?,?,?,?,?,?,?,?,?,?,?,?,DEFAULT)"))) {
-		die("Binding parameters failed: (" . $stmt->errno . ") " . $stmt->error);
-	}
-	
-	// 8. There are 10 parameter, the first 8 are strings, the 9th is an integer, the 10th is a string		
-	
-	$stmt->bind_param("sssssssissss", 
-		$orderDate, 
-		$_POST['cust_name'],
-		$_POST['cust_phone'],
-		$_POST['cust_address'],
-		$_POST['cust_city'],
-		$_POST['cust_state'],
-		$_POST['cust_zip'],
-		$_POST['drop'],
-		$_POST['scoop'],
-		$_POST['container'],		
-		$toppings,
-		$Candy
-	);
-
-  // 9. Once the query is prepared, we can execute it
-  
-  if (!$stmt->execute()) {
-  	die("Execute failed: (" . $stmt->errno . ") " . $stmt->error);
-	}
-	else {
-		// 10. If the query had no errors, we display the order
-		return displayOrder();
-	}
-	$stmt->close();
-	$mysqli->close();
-}
-
-function processForm() {
-	$fieldMissing = false;
-	foreach ($_POST as $key => $value) {
-			if ($value == null)  {
-				$_POST[$key] = "!missing!";
-				$fieldMissing = true;
-			}
-	}
-	if ($fieldMissing) {
-		return createForm();
-	}
-	else {
-		return insertOrder();
-	}
-  
-  }
-  
 
 
-function displayOrder() {	
-	$output = "";
-	$output .= displayDate();
-	foreach ($_POST as $key => $value) {
-		if (is_array($value))
-		{
-			$value = implode(", ", $value);
-		}
-		$output .=  '
-			<div class="panel panel-primary">
-		  	<div class="panel-heading">'.$key.'</div>
-				<div class="panel-body"><p>'.$value.'</p></div>	
-			</div>';
-	}
-	$output .= '<a class="btn btn-primary" href="order.php">Back</a>';
-	return $output;
-}
-
-function displayTable() {
-	
-	// 1. Connect to the database
-	
-	$mysqli = databaseConnect();
-	
-	// 2. Define the query as string
-	// Note that we don't have to prepare it because there are no variables, i.e. the query is hardcoded and cannot be change by a user
-	
-	$query = "SELECT * FROM am8orders";
-	
-	// 3. Run the query.  Prepared queries must be executed.  But hardcoded queries can be run with one function call
-	// $results is a pointer to the query's output
-	
-	$result = $mysqli->query($query);
-	
-	// 4. Fetch the fields that the query returned
-	// $finfo is an object that stores all the field information
-	
-	$finfo = $result->fetch_fields();
-		
-	// 5. Create an HTML table
-	
-	$output = '<table class="table table-bordered">';
-
-	// 6. Loop for all the fields and print them as table headers
-	
-	$output .= '<thead><tr>';
-	foreach ($finfo as $field) {
-		$output .= '<th>'.$field->name.'</th>';
-	}
-	$output .= '</tr></thead><tbody>';
-	
-	// 7. Fetch each row of the query result to make an HTML row
-	
-	while ($row = $result->fetch_row()) {
-		$output .= '<tr>';
-		
-		// 8. Loop for each column and make an HTML table data column
-		foreach ($row as $val) {
-			$output .= '<td>'.$val.'</td>';
-		}
-		$output .= '</tr>';
-	}
-	$output .= '</tbody></table>';
-
-	$result->free();
-	$mysqli->close();
-	return $output;
-}	
-
-function createAdminTable() {
-  $mysqli = databaseConnect();
-	$dropquery = "DROP TABLE IF EXISTS `Admin`";
-	$createquery = "CREATE TABLE IF NOT EXISTS `Admin` (
-		`userid` varchar(24) NOT NULL,
-		`password` varchar(256) NOT NULL,
-		`employee_type` int(2) NOT NULL,
-		PRIMARY KEY (`userid`)
-	)";
-	if (!$mysqli->query($dropquery)) {
-		echo 'Table drop failed: (' . $mysqli->errno . ') ' . $mysqli->error;
-	}
-	else if (!$mysqli->query($createquery)) {
-		echo 'Table create failed: (' . $mysqli->errno . ') ' . $mysqli->error;
-	}
-	else {
-		echo 'Table created';
-	}	
-}
-
-function createAdminForm() {	
-	$radio_id = "employee_type";
-	$displayDate = displayDate();
-	
-	
-	return 
-	$displayDate.'
-	<form method="post" action="order.php?action=submit">
-	<h2>Admin Form</h2>
-	<div class="row">'.		
-	createTextField("userid", "userid", 24).
-	createTextField("password", "passwd", 256).
-	createRadioButton($radio_id, "employee", 0, $errorClass).
-	createRadioButton($radio_id, "manager", 1, $errorClass).
-	'<button type= "submit" class = "btn btn-success">Submit</button>
-	</div>';
-	
-}
-
-
-
-function processAdminForm() {
-	$fieldMissing = false;
-	foreach ($_POST as $key => $value) {
-			if ($value == null)  {
-				$_POST[$key] = "!missing!";
-				$fieldMissing = true;
-			}
-	}
-	if ($_POST['employee_type'] == null) {
-		$_POST['employee_type'] = "!missing!";
-		$fieldMissing = true;
-	}
-	if ($fieldMissing) {
-		return createAdminForm();
-	}
-	else {
-		return insertAdminOrder();
-	}
-}
-
-function insertAdmin() {
-	$mysqli = databaseConnect();
-	
-
-	if (!($stmt = $mysqli->prepare("INSERT INTO `Admin` VALUES (?,?,?)"))) {
-		die("Binding parameters failed: (" . $stmt->errno . ") " . $stmt->error);
-	}		
-	$stmt->bind_param("sss", 
-		$_POST['userid'],
-		$hashed_passwd = hash("sha256", $_POST['passwd']),
-		$_POST['employee_type']
-	);
-
-  if (!$stmt->execute()) {
-  	die("Execute failed: (" . $stmt->errno . ") " . $stmt->error);
-	}
-	
-	$stmt->close();
-	$mysqli->close();
-}
-
-function createLoginForm() {	
-
-	
-	
-	return 
-	'
-	<form method="post" action="login.php?action=submit">
-	<h2>Login Form</h2>
-	<div class="row">'.		
-	createTextField("userid", "userid", 24).
-	createTextField("password", "passwd", 256).
-	'<button type= "submit" class = "btn btn-success">Submit</button>
-	
-	</div>';
-	
-}
-
-function processLoginForm() {
-  $fieldMissing = false;
-  foreach ($_POST as $key => $value) {
-    $value = strval($value);
-    if ($value == "")  {
-      $_POST[$key] = "!missing!";
-      $fieldMissing = true;
-    }
-  }
-  if ($fieldMissing) {
-    return createLoginForm();
-  }
-  else {
-    checkPassword();
-  }
-}
-
-
+/**
+ * function to check if users password is in the database
+ *
+ * @return boolean true if the password entered matches the 
+ *				  stored password, false otherwise
+ */
 function checkPassword() {
   $mysqli = databaseConnect();
   $submitted_passwd = hash('sha256', $_POST['passwd']);
@@ -435,6 +115,13 @@ function checkPassword() {
   }
 }
 
+/**
+ * function to create a form with text fields and check boxes
+ * 			to add a fire fighter to the database
+ *
+ * @return HTML the form to enter a fire fighter with all his/her 
+ *				current credentials
+ */
 function addFirefighterForm(){
 	return 
 	'
@@ -458,6 +145,10 @@ function addFirefighterForm(){
 	</div>';
 }
 
+/**
+ * function to insert a fire fighter into the Alphabit Soup
+ *			database
+ */
 function insertFirefighter(){
 	//var_dump($_POST);
 	$mysqli = databaseConnect();
@@ -531,6 +222,14 @@ function insertFirefighter(){
 	$mysqli->close();
 }
 
+/**
+ * function to check if the correct information is inputted
+ *			within the add fire fighter form and then is inserted
+ *			into the Alphabit Soup database
+ *
+ * @return function addFirefighterForm if there is a field missing or
+ *		  function insertFirefighter if all information is correct
+ */
 function processFirefighter (){
 	$fieldMissing = false;
 	foreach ($_POST as $key => $value) {
@@ -549,6 +248,12 @@ function processFirefighter (){
 	}
 }
 
+/**
+ * function to display all the fire fighters within the Alphabit
+ *			Soup database
+ *
+ * @return HTML a nicely manufactured table of all the fire fighters
+ */
 function editTable(){
 $mysqli = databaseConnect();
 $query = "SELECT * FROM Firefighter";
@@ -563,7 +268,7 @@ $query = "SELECT * FROM Firefighter";
 	$output .= '</tr></thead><tbody>';
 	while ($row = $result->fetch_row()) {
 		$output .= '<tr><td><a class = "btn btn-danger" href="deleteFirefighter.php?id='.$row[0].'"><span class = "glyphicon glyphicon-remove"></span></a>';
-		$output .= '<a class = "btn btn-sm btn-warning" href="editFirefighter.php?id='.$row[0].'"><span class = "glyphicon glyphicon-edit"></span></a></td>';
+		$output .= '<a class = "btn btn-sm btn-warning" href="editFirefighter.php?id='.$row[0].'">edit</a></td>';
 		
 		foreach ($row as $val) {
 			$output .= '<td>'.$val.'</td>';
@@ -577,6 +282,12 @@ $query = "SELECT * FROM Firefighter";
 	return $output;
 }
 
+/**
+ * function to delete a fire fighter from the Alphabit Soup 
+ *			database
+ *
+ * @param int $id the id number of the fire fighter
+ */
 function deleteFirefighter($id){
 	$mysqli = databaseConnect();
 	
@@ -616,47 +327,36 @@ function deleteFirefighter($id){
 
 }
 
-/*
-function editFirefighter($id){
-	getFirefighter($id);
-	
-	$title = 'Latham FD';
-
-	echo createHeader($title);
-
-	echo createEditedForm($id);
-	
-
-
-	echo createFooter($title);
-}*/
-
+/**
+ * function to retrieve a fire fighter from the Alphabit Soup 
+ *			database
+ *
+ * @param int $id the id number of the fire fighter
+ *
+ * @return string the array of that fire fighter's information
+ *			and credentials 
+ */
 function getFirefighter($id){
 	$mysqli = databaseConnect();
-	$query1 = "SELECT * from `Firefighter` AS F, `Has` AS H where F.ffid =? AND H.ffid =?";
+	$query1 = "SELECT * from `Firefighter` AS F where F.ffid =?";
 	if (!($stmt = $mysqli->prepare($query1))) {
 		die("Binding parameters failed: (" . $stmt->errno . ") " . $stmt->error);
 	}
-	$stmt->bind_param("ss", $id, $id);
+	$stmt->bind_param("s", $id);
 	if (!$stmt->execute()) {
   		die("Execute failed: (" . $stmt->errno . ") " . $stmt->error);
 	}
-/*
-	if (!$stmt->execute()) {
-  		die("Execute failed: (" . $stmt->errno . ") " . $stmt->error);
-	}
-*/	
 
 	$stmt->bind_result( 
 		$row['ffid'],
 		$row['fname'],
 		$row['lname'],
 		$row['rank'],
-		$row['active'],
-		$row["type"]		
+		$row['active']
+		//$row['type']		
 	);
 	$stmt->fetch();
-	$row['type'] = explode(", ", $row['type']);
+	//$row['type'] = explode(", ", $row['type']);
 
 	$stmt->close();
 	$mysqli->close();
@@ -664,40 +364,60 @@ function getFirefighter($id){
 	return $row;
 }
 
+/**
+ * function to update a fire fighter in the Alphabit Soup 
+ *			database
+ *
+ * @param int $id the id number of the fire fighter
+ */
 function updateFirefighter($id){
 	$mysqli = databaseConnect();
 	
-	$type = implode(", ", $row['type']);
+	//$type = implode(", ", $row['type']);
 
 	$query2 = "UPDATE `Firefighter` SET fname = ?, lname=?, rank=? WHERE ffid = ?";
 	if (!($stmt = $mysqli->prepare($query2))) {
 		die("Binding parameters failed: (" . $stmt->errno . ") " . $stmt->error);
 	}
+		
 	$stmt->bind_param("ssss",
-		$row['fname'],
-		$row['lname'],
-		$row['rank'],
+		$_POST['fname'],
+		$_POST['lname'],
+		$_POST['rank'],
 		$id
 	);
 	
-/*  Need another query for the `Has` table??? */
-	
+		
 	if (!$stmt->execute()) {
   		die("Execute failed: (" . $stmt->errno . ") " . $stmt->error);
 	}
 
 	$stmt->close();
-	
-	var_dump($_POST["type"]);
+
+
+	if (!($stmt2 = $mysqli->prepare("DELETE FROM `Has` WHERE ffid=?"))) {
+			die("Binding parameters failed: (" . $stmt->errno . ") " . $stmt->error);
+		}
+		
+		$stmt2->bind_param("i", 
+			$id
+		);
+
+		if (!$stmt2->execute()) {
+		die("Execute failed: (" . $stmt->errno . ") " . $stmt->error);
+		}
+		$stmt2->close();
+
+	//var_dump($_POST["type"]);
 	foreach ($_POST["type"] as $t) {
 
-		if (!($stmt3 = $mysqli->prepare("UPDATE `Has` SET type = ? WHERE ffid = ?"))) {
+		if (!($stmt3 = $mysqli->prepare("INSERT INTO `Has` VALUES (?,?,NULL,NULL)"))) {
 			die("Binding parameters failed: (" . $stmt->errno . ") " . $stmt->error);
 		}
 		
 		$stmt3->bind_param("ss", 
-			$t,
-			$id		
+			$id,
+			$t
 		);
 
 		if (!$stmt3->execute()) {
@@ -709,10 +429,18 @@ function updateFirefighter($id){
 	$mysqli->close();
 }
 
+/**
+ * function to create an edited form with text fields retrieved
+ *			from the database and check boxes to update a fire 
+ *			fighter's information to the database
+ *
+ * @return HTML the form to update a fire fighter with all his/her 
+ *				current credentials
+ */
 function createEditForm(){
 	return 
 		'
-		<form method="post" action="editFirefighter.php?action=submit">
+		<form method="post" action="editFirefighter.php?action=submit&id='.$_GET[id].'">
 		<h2>Firefighter Edit Form</h2>
 		<div class="row">'.		
 		createTextField("fname", "First Name", 256).
@@ -732,26 +460,17 @@ function createEditForm(){
 		</div>';
 }
 
-function createEditedForm($id){
-	return '
-   <form method="post" action="updateAdmin.php?action=submit&id='.$id.'">
-   <h2>Firefighter Info</h2>
-   <div class="row">'.	   
-   createEditedTextField("fname", "First Name", 256, $_POST["fname"]).
-   createEditedTextField("lname", "Last name", 256, $_POST["lname"]).
-   createEditedTextField("rank", "Firefighter Rank", 256, $_POST["rank"]).
-   '</div>
-   
-   <div class="row"><div class="col-sm-4"><h2>Credentials</h2>'.
-   createCredentialsCheckBox().
-   '</div>
-      
-   
-   <button type="submit" class = "btn btn-success">Update</button>
-   </form>';
-
-}
-
+/**
+ * function to create an edited text box to apply within a form
+ *
+ * @param string $name the name of the attribute in the database
+ * @param string $label the name of the text to display
+ *				for the text box
+ * @param int $size the length of the text field
+ * @param string $value the value of that attribute
+ *
+ * @return the edited text field on the form 
+ */
 function createEditedTextField($name, $label, $size, $value){
 	//error handling - styles the text fields using Bootstrap if the $id field is equal to !missing! 
 	$errorClass = null;
@@ -770,6 +489,12 @@ function createEditedTextField($name, $label, $size, $value){
    	</div>';	
 }
 
+/**
+ * function to make the credentials of the fire fighter false
+ *			so the editor can update the fire fighter's credentials
+ *
+ * @return the check boxes blanked out
+ */
 function createCredentialsCheckBox(){
 	$possibleValues['Driver'] = false;
 	$possibleValues['EMS'] = false;
@@ -795,6 +520,19 @@ function createCredentialsCheckBox(){
 	return $output;	
 }
 
+/**
+ * function to create the edited text box to apply within a form
+ *
+ * @param string $id the name of the array the attributes 
+ *				are stored in
+ * @param string $value the name of the attribute in the 
+ *				database
+ * @param string $label the name of the text to display
+ *				for the check box
+ * @param string $selected the value if the check box is selected
+ *
+ * @return the check boxes on the form 
+ */
 function createEditedCheckBox($id, $value, $label, $selected){
 	return '	
   <div class="checkbox">
@@ -804,24 +542,71 @@ function createEditedCheckBox($id, $value, $label, $selected){
   </div> ';	
 }
 
-/* Not sure if needed as of right now (2/3/16)*/
-function createEditedOptionSelect($id, $start, $end, $selected) {
-	$output = '<select class="form-control" name="'.$id.'" id="'.$id.'">';
-	for ($i = $start; $i <= $end; $i++){
-		if ($i == $selected){
-			$output .= '<option value="'.$i.'" selected>'.$i.'</option>';
-		}
-		else{
-			$output .= '<option value="'.$i.'">'.$i.'</option>';
-		}
-	}
-	$output .= '</select>';
-	return $output;
+
+/* FUNCTIONS NOT USED CURRENTLY
+function createEditedForm($id){
+	return '
+   <form method="post" action="updateAdmin.php?action=submit&id='.$id.'">
+   <h2>Firefighter Info</h2>
+   <div class="row">'.	   
+   createEditedTextField("fname", "First Name", 256, $_POST["fname"]).
+   createEditedTextField("lname", "Last name", 256, $_POST["lname"]).
+   createEditedTextField("rank", "Firefighter Rank", 256, $_POST["rank"]).
+   '</div>
+   
+   <div class="row"><div class="col-sm-4"><h2>Credentials</h2>'.
+   createCredentialsCheckBox().
+   '</div>
+      
+   
+   <button type="submit" class = "btn btn-success">Update</button>
+   </form>';
+
+}
+
+/*
+function createLoginForm() {	
+
+	
+	
+	return 
+	'
+	<form method="post" action="login.php?action=submit">
+	<h2>Login Form</h2>
+	<div class="row">'.		
+	createTextField("userid", "userid", 24).
+	createTextField("password", "passwd", 256).
+	'<button type= "submit" class = "btn btn-success">Submit</button>
+	
+	</div>';
+	
 }
 
 
+function processLoginForm() {
+  $fieldMissing = false;
+  foreach ($_POST as $key => $value) {
+    $value = strval($value);
+    if ($value == "")  {
+      $_POST[$key] = "!missing!";
+      $fieldMissing = true;
+    }
+  }
+  if ($fieldMissing) {
+    return createLoginForm();
+  }
+  else {
+    checkPassword();
+  }
+}
+*/
+
 
 // stuff for call table
+/**
+ * Returns a string of HTML that displays a table containing information from the CallInfo table
+ * @return string
+ */
 function displayCallTable() {
 
     $mysqli = databaseConnect();
@@ -862,6 +647,18 @@ function displayCallTable() {
     return $output;
 }
 
+/**
+ * Adds call information to the CallInfo table.
+ * @param string $address Where the fire takes place
+ * @param string $fire_type Type of fire (structure, etc)
+ * @param string $time_of_call When the call was recieved
+ * @param string $responding_unit Unit that responds to the call
+ * @param string $truck_leaves Time the truck leaves the firehouse
+ *               Format: YYYY-MM-DD HH:MM:SS
+ * @param string $truck_arrives Time the truck arrives at the fire
+ *               Format: YYYY-MM-DD HH:MM:SS
+ *
+ */
 function addToCallTable($address, $fire_type, $time_of_call,
                         $responding_unit, $truck_leaves,
                         $truck_arrives) {

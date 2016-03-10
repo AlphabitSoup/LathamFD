@@ -582,6 +582,7 @@ function createLoginForm() {
 	
 }
 
+
 function processLoginForm() {
   $fieldMissing = false;
   foreach ($_POST as $key => $value) {
@@ -600,4 +601,81 @@ function processLoginForm() {
 }
 */
 
+
+// stuff for call table
+/**
+ * Returns a string of HTML that displays a table containing information from the CallInfo table
+ * @return string
+ */
+function displayCallTable() {
+
+    $mysqli = databaseConnect();
+    $query = "SELECT * FROM CallInfo ORDER BY time_of_call";
+
+    // 3. Run the query.  Prepared queries must be executed.  But hardcoded queries can be run with one function call
+    // $results is a pointer to the query's output
+    $result = $mysqli->query($query);
+
+    // 4. Fetch the fields that the query returned
+    // $finfo is an object that stores all the field information
+
+    $finfo = $result->fetch_fields();
+
+    $output = '<table border="1">';
+
+    $output .= '<thead><tr>';
+    foreach ($finfo as $field) {
+	$output .= '<th>&nbsp'.$field->name.'&nbsp</th>';
+    }
+    $output .= '</tr></thead><tbody>';
+
+    // 7. Fetch each row of the query result to make an HTML row
+
+    while ($row = $result->fetch_row()) {
+	$output .= '<tr>';
+
+	// 8. Loop for each column and make an HTML table data column
+	foreach ($row as $val) {
+	    $output .= '<td>&nbsp'.$val.'&nbsp</td>';
+	}
+	$output .= '</tr>';
+    }
+    $output .= '</tbody></table>';
+
+    $result->free();
+    $mysqli->close();
+    return $output;
+}
+
+/**
+ * Adds call information to the CallInfo table.
+ * @param string $address Where the fire takes place
+ * @param string $fire_type Type of fire (structure, etc)
+ * @param string $time_of_call When the call was recieved
+ * @param string $responding_unit Unit that responds to the call
+ * @param string $truck_leaves Time the truck leaves the firehouse
+ *               Format: YYYY-MM-DD HH:MM:SS
+ * @param string $truck_arrives Time the truck arrives at the fire
+ *               Format: YYYY-MM-DD HH:MM:SS
+ *
+ */
+function addToCallTable($address, $fire_type, $time_of_call,
+                        $responding_unit, $truck_leaves,
+                        $truck_arrives) {
+
+    $mysqli = databaseConnect();
+
+    $insert_query = "INSERT INTO CallInfo VALUES (" . $address
+                  . ", " . $fire_type . ", " . $time_of_call
+                  . ", " . $responding_unit . ", "
+                  . $truck_leaves . ", " . $truck_arrives . ")";
+
+    if (!$mysqli->query($insert_query)) {
+        echo 'Table insert failed: (' . $mysqli->errno . ') ' . $mysqli->error;
+    }
+}
+
+
+
+// end stuff for call info
 ?>

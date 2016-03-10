@@ -1,3 +1,8 @@
+<?php
+if (empty($_SESSION['loggedin'])) {
+  header('Location: ./login.php');
+}
+?>
 
 <!DOCTYPE html>
 <html>
@@ -39,3 +44,4 @@
   </body>
   <?php require('footer.php'); ?>
 </html>
+

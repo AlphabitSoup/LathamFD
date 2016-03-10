@@ -822,6 +822,10 @@ function createEditedOptionSelect($id, $start, $end, $selected) {
 
 
 // stuff for call table
+/**
+ * Returns a string of HTML that displays a table containing information from the CallInfo table
+ * @return string
+ */
 function displayCallTable() {
 
     $mysqli = databaseConnect();
@@ -862,6 +866,18 @@ function displayCallTable() {
     return $output;
 }
 
+/**
+ * Adds call information to the CallInfo table.
+ * @param string $address Where the fire takes place
+ * @param string $fire_type Type of fire (structure, etc)
+ * @param string $time_of_call When the call was recieved
+ * @param string $responding_unit Unit that responds to the call
+ * @param string $truck_leaves Time the truck leaves the firehouse
+ *               Format: YYYY-MM-DD HH:MM:SS
+ * @param string $truck_arrives Time the truck arrives at the fire
+ *               Format: YYYY-MM-DD HH:MM:SS
+ *
+ */
 function addToCallTable($address, $fire_type, $time_of_call,
                         $responding_unit, $truck_leaves,
                         $truck_arrives) {

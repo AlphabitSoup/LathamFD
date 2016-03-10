@@ -5,12 +5,17 @@ require 'header.php';
 
 $title = 'Latham FD';
 
-if ($_GET['action']=="submit") {
-  echo processFirefighter();
+if (empty($_SESSION['loggedin'])) {
+  header('Location: ./login.php');
 }
 else {
-  echo addFirefighterForm();
+  if ($_GET['action']=="submit") {
+    echo processFirefighter();
+  }
+  else {
+    echo addFirefighterForm();
+  }
+  require 'footer.php';
 }
 
-require 'footer.php';
 ?>

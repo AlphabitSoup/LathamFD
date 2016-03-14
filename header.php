@@ -1,6 +1,12 @@
 
 
-<!DOCTYPE html>
+<?php
+/** Creates the header for the Latham Farms website where you can navigate to
+*each neccesary part of the website
+*
+*/
+echo'
+
 <html>
 <head>
     <meta charset="UTF-8">
@@ -15,6 +21,7 @@
 	<link rel="stylesheet" type="text/css" href="common.css">
 	</head>
    <body>  
+   
     <nav role="navigation" class="navbar navbar-default">
     <!-- Brand and toggle get grouped for better mobile display -->
     <div class="navbar-header">
@@ -29,15 +36,14 @@
     <!-- Collection of nav links and other content for toggling -->
     <div id="navbarCollapse" class="collapse navbar-collapse">
         <ul class="nav navbar-nav">
-            <li class="active"><a href="./index.php">Latham Fire Department <span class="glyphicon glyphicon-home"></span></a></li>
             <li><a href="query.php">Trucks</a></li>
             <li><a href="addFirefighter.php">Add Firefighter</a></li>
 			<li><a href="displayFirefighter.php">Display Firefighters</a></li>
+			<li><a href="active.php">Present Firefighters</a></li>
 			
         </ul>
         <ul class="nav navbar-nav navbar-right">
-            <li><a href="./login.php">Login</a></li>
+            <li><a href="./logout.php">Logout</a></li>
         </ul>
     </div>
-    </nav>
-
+    </nav> ';

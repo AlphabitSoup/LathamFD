@@ -1,5 +1,5 @@
 <?php
-
+<?php require('./header.php'); ?>
 echo'
 <html>
 

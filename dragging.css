@@ -1,0 +1,20 @@
+#sortable1, #Latter_Truck,
+#Rescue_Truck, #Tanker_Truck, #Utility_Truck, #Brush_Truck{
+    border: 1px solid #990000;
+    width: 142px;
+    min-height: 20px;
+    list-style-type: none;
+    margin: 0 auto;
+
+  }
+
+
+#sortable1 li, #Latter_Truck li, #Rescue_Truck li, 
+#Tanker_Truck li, #Utility_Truck li, #Brush_Truck li{
+    margin: 0 5px 5px 5px;
+    padding: 3px;
+    font-size: 12px;
+    font-weight: bold;
+    width: 120px;
+    text-align: center;
+  }

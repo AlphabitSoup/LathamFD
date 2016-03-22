@@ -1,14 +1,22 @@
-<?php
-echo'
+
+
+<!DOCTYPE html>
+<html>
 <head>
     <meta charset="UTF-8">
     <title>Latham Fire</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cask.scotch.io/bootstrap-4.0-flex.css">
+    
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="dragging.css">
+    <script src="jquery-ui-1.11.4/external/jquery/jquery.js"></script>
+	<script src="jquery-ui-1.11.4/jquery-ui.js"></script>
 	<link rel="stylesheet" type="text/css" href="common.css">
-
+	</head>
+   <body>  
     <nav role="navigation" class="navbar navbar-default">
     <!-- Brand and toggle get grouped for better mobile display -->
     <div class="navbar-header">
@@ -24,15 +32,15 @@ echo'
     <div id="navbarCollapse" class="collapse navbar-collapse">
         <ul class="nav navbar-nav">
             <li class="active"><a href="./index.php">Latham Fire Department <span class="glyphicon glyphicon-home"></span></a></li>
-            <li><a href="trucks.php">Trucks</a></li>
-            <li><a href="query.php">Query</a></li>
+            <li><a href="query.php">Trucks</a></li>
+            <li><a href="addFirefighter.php">Add Firefighter</a></li>
+			<li><a href="displayFirefighter.php">Display Firefighters</a></li>
+			<li><a href="active.php">Active Firefighters</a></li>
 			
         </ul>
-		<form 
         <ul class="nav navbar-nav navbar-right">
             <li><a href="./login.php">Login</a></li>
         </ul>
     </div>
     </nav>
-</head>';
-?>
+

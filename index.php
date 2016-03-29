@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html>
-<?php require 'security.php';
+<?php 
 require('./header.php'); 
 require('DBConnect.php');
+require './security.php';
 ?>
 <body>
 	<div class="container">
-    	<h1>Latham Fire</h1>
+    	<h1>Truck Assignments</h1>
     	<?php
     		$lastCall = mysql_query('SELECT callid FROM responded ORDER BY callid DESC LIMIT   1;');
     		$result = mysql_fetch_assoc($lastCall);
@@ -22,10 +23,11 @@ require('DBConnect.php');
 
     		//function makeTruck () {
     		$truckType = $row1["type"];
-    		echo '<h2>Loaded Trucks</h2>
+    		echo '
+    		<p>&nbsp;</p>
     		<div class = "col-xs-12 col-sm-6 col-md-4 col-lg-4 text-center" style="background-color:#ff9999; margin: 5px;" ><table class="table table-hover " style="" id="table5">
     		<tr colspan = "3"><h3>'.$truckType.'</h3></tr>
-    		<tr><td>ffid</td><td>First Name</td><td>Last Name</td></tr>';
+    		<tr style="font-weight:bold"><td>Fire Fighter ID</td><td>First Name</td><td>Last Name</td></tr>';
 			  while($row = mysql_fetch_assoc($ffids) ){
 			  		if ($truckType != $row["type"]){
 			  			echo '</table>

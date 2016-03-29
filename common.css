@@ -10,7 +10,12 @@ body {
 h1 {
      color: #550000;
      text-align: center;
-     font-size: 5em;
+     font-size: 3em;
+}
+h2 {
+     color: #550000;
+     text-align: center;
+     font-size: 2em;
 }
 
 .navbar-header, #navbarCollapse {
@@ -35,9 +40,19 @@ h1 {
   margin-left: 5%;
   }
 
-  #table1, #table2{
-  width: 50%; 
-  display: inline-table;  
+
+
+
+
+
+  #table1, #table2{ 
+
+  display: inline-table; 
+  margin: 5px;
+  width:100%;
+  table-layout: fixed;
+  word-wrap: break-word;
+
   }
 
   tbody tr:hover.selected td,
@@ -60,7 +75,7 @@ tbody tr.selected td {
 @media only screen and (max-width: 768px) {
   #table1, #table2 {
     width: 100%;
-    display: block;
+
   }
 
 [class^="col"] {

@@ -441,12 +441,14 @@ function createEditForm(){
 	return 
 		'
 		<form method="post" action="editFirefighter.php?action=submit&id='.$_GET[id].'">
-		<h2>Firefighter Edit Form</h2>
-		<div class="row">'.		
+		<h2>Edit Firefighter Credentials</h2>
+		<div class="row" style "text-align:center">'.		
 		createTextField("fname", "First Name", 256).
 		createTextField("lname", "Last name", 256).
 		createTextField("rank", "Firefighter Rank", 256).
-		'<label class="control-label" >Firefighter Credentials</label>'.
+		'</div>
+		<div>
+		<label class="control-label" >Firefighter Credentials</label>'.
 		createCheckBox("type", "Driver", "Driver").
 		createCheckBox("type", "EMS", "EMS").
 		createCheckBox("type", "Exterior", "Exterior").

@@ -15,9 +15,11 @@ $firefighter = mysql_query('SELECT * FROM Firefighter');
  * if active status is one they are put in table one, otherwise they are put in table 2
  */
 echo '
-<div class="container">
-<div id="refresh">
-<table class="table table-hover" style="background-color:#b3ffb3" id="table1">
+<div class = "row">
+<div class = "col-md-4 col-md-offset-2">
+<div class = "text-center">
+<h4> Available</h4>
+<table class="table table-hover table-responsive" style="background-color:#b3ffb3" id="table1">
 		<tr style="font-weight: bold;"><td>Firefighter ID</td><td>First Name</td><td>Last Name</td><td>Change Status</td></tr>';
 	while($row = mysql_fetch_assoc($firefighter)){
 			if ($row['active'] == '1' ){
@@ -40,11 +42,15 @@ echo '
 
 		}
 
-	echo '</table>';
+	echo '</table> </div> </div>';
 
 
 $firefighter2 = mysql_query('SELECT * FROM Firefighter');
-echo '<table class="table table-hover" style="background-color:#ff9999" id="table2">	
+echo '
+<div class = "col-md-4">
+<div class = "text-center">
+<h4> Unavailable</h4>
+<table class="table table-hover table-responsive" style="background-color:#ff9999" id="table2">	
 		<tr style="font-weight: bold;"><td>Firefighter ID</td><td>First Name</td><td> Last Name</td>
 		<td>Change Status</td></tr>';
 
@@ -67,10 +73,18 @@ echo '<table class="table table-hover" style="background-color:#ff9999" id="tabl
 				print "\r\n";
 		}
 	}
-	echo '</table>
-	<button type="submit" class="btn btn-success">Submit</button><br><br>
-	<button type="button" class="btn btn-danger" id="reset" >Reset</button></div>
-	<div>';
+	echo '</table> <br></div></div></div>
+	<p>&nbsp;</p>
+	<div class = "row">
+	<button type="submit" class="btn btn-success">Submit</button><br></div>
+	<br>
+	<div class = "row">
+	<button style = "margin-bottom: 5px;" type="button" class="btn btn-danger" id="reset" >Reset</button> <br></div>
+	<p style = "font-weight: bold; text-align: center; margin-left: 15px; "> Available implies all firefighters are currently present at the station, ready for truck assignment.</p>
+	<p style = "font-weight: bold; text-align: center; margin-left: 15px;">If a firefighter is shown as available, but is not presentat the station, select their name from the "Available" list and click submit. </p>
+	<p style = "font-weight: bold; text-align: center; margin-left: 15px; ">If a firefighter who is listed as unavailable is currently present at the station, select their
+	name from the "Unavailable" list and click submit.</p>
+	<p style = "font-weight: bold; text-align: center; margin-left: 15px;"> To make all firefighters unavailable, click "Reset".</p>';
 
 ?>
 

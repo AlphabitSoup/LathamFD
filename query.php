@@ -2,7 +2,7 @@
 //require('./pickCert.js');
 require('./header.php');
 require('DBConnect.php');
-require 'security.php';
+require './security.php';
  
 $dbh = mysql_connect(DB_SERVER.':'.DB_PORT,DB_USERNAME,DB_PASSWORD);
 if (!$dbh) {
@@ -16,7 +16,7 @@ $callinfo = mysql_query('SELECT callid, address, fire_type FROM CallInfo ORDER B
 LIMIT     2;');
 echo '
 <div class="container">
-<h1>Load Trucks</h1>
+<h1>Fire department Calls</h1>
 <table class="table table-hover" style="" id="table5">
     <tr style="font-weight: bold;"><td>Call  ID</td><td>Adress</td><td>Fire Type</td></tr>';
   while($row = mysql_fetch_assoc($callinfo)){
@@ -28,7 +28,7 @@ echo '
           echo '</td>';
         }    
       }
-  echo '</table>';
+  echo '</table> <br><br>';
 
 
 
@@ -36,7 +36,10 @@ echo '
 
 session_start();
 ?>
+<h1>Load Fire fighters onto Fire Trucks</h1>
+<br>
 <div class = "row">
+
 
   <div id="result">
   </div>
@@ -46,10 +49,10 @@ session_start();
     <form  method="post">
       <div class= "btn-group">
         <button id = "cert" class="btn btn-small " data-toggle="dropdown">
-        Cert Types
+        Responding Firefighters
         <span class="caret"></span></button>
         <ul id = "cert" class=" dropdown-menu"role = "menu">
-          <li><a href="#" name="*">All Firefighters</a></li>
+          <li><a href="#" name="*">Responding Firefighters<</a></li>
           <li><a href="#" name="Driver">Driver</a></li>
           <li><a href="#" name="EMS">EMS</a></li>
           <li><a href="#" name="Exterior">Exterior</a></li>
@@ -68,7 +71,7 @@ session_start();
 
 
   <div class= "sort col-xs-12 col-sm-4 col-md-4 col-lg-2 text-center"> 
-    <h4>latter</h4>
+    <h4>Ladder</h4>
     <div id="Latter_Truck" class="connectedSortable">
     </div>
   </div>

@@ -1,0 +1,61 @@
+body {
+    padding-top: 70px;
+    padding-bottom: 20px;
+    background-color: gray;
+}
+
+footer{
+    background-color: black;
+    position: fixed; 
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 10x;
+
+}
+footer p{
+    font-size: 12px;
+    color: black;
+    text-indent: 50px;
+}
+h1{
+    color: white;
+   text-shadow: 2px 2px black;
+    font-size: 60px;
+}
+h2, h3{
+    color: white;
+    text-shadow: 2px 2px black;
+}
+h4{
+    text-align: center;
+    color: white;
+    text-shadow: 1px 1px black;
+}
+a{
+    color: white;
+}
+.intropage{
+    color: white;
+}
+tr{
+    color:white;
+}
+.links ul,
+.links li {
+    list-style-type: none;
+    padding-top: 2px;
+    padding-bottom: 2px;
+}
+.links {    
+    margin: auto;
+    width:38%;
+    border:3px solid;
+    vertical-align: middle;
+}
+.img-responsive.map,
+.image-responsive.home{
+    margin: 0 auto;
+    padding: 15px;
+}
+

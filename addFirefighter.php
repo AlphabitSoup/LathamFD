@@ -10,8 +10,8 @@
  *@author Alphabit Soup
  */
  
-require 'functions.php';
-require 'header.php';
+require_once 'functions.php';
+require_once 'header.php';
 
 //$title = 'Latham FD';
 

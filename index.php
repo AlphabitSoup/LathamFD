@@ -1,7 +1,13 @@
 <!DOCTYPE html>
 <html>
 <?php 
-require('./header.php'); 
+   require_once('./header.php');
+   require_once 'functions.php';
+   
+if (empty($_SESSION['loggedin'])) {
+    header('Location: ./login.php');
+}
+
 require('DBConnect.php');
 require './security.php';
 ?>
@@ -15,10 +21,6 @@ require './security.php';
     		$ffids = mysql_query("SELECT ffid, type FROM responded WHERE callid = ".$result["callid"]." ORDER BY type");
     		$ffids2 = mysql_query("SELECT ffid, type FROM responded WHERE callid = ".$result["callid"]." ORDER BY type");
     		$row1 = mysql_fetch_assoc($ffids2);
-
-
-    		
-
 
 
     		//function makeTruck () {
@@ -53,6 +55,7 @@ require './security.php';
 			//}
 
 
+ 
 
 
 			  ?>

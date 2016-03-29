@@ -4,9 +4,16 @@
 *
 *
 */
-require('./header.php'); //inlcudes nave bar, jquery, bootstrap, and other libraries 
+require_once './header.php'; //inlcudes nave bar, jquery, bootstrap, and other libraries 
 require('DBConnect.php');// allows us to connect to the datbase 
-require 'security.php';//adds security to the pages 
+require 'security.php';//adds security to the pages
+require_once 'functions.php';
+
+if (empty($_SESSION['loggedin'])) {
+  header('Location: ./login.php');
+}
+
+else {
 
 $firefighter = mysql_query('SELECT * FROM Firefighter');
 /**
@@ -153,3 +160,7 @@ echo '
 		
    		});
  </script>
+
+<?php
+}
+?>

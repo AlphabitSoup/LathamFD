@@ -1,8 +1,11 @@
 <?php
 //require('./pickCert.js');
 require('./header.php');
+if (empty($_SESSION['loggedin'])) {
+    header('Location: ./login.php');
+}
 require('DBConnect.php');
-require './security.php';
+
  
 $dbh = mysql_connect(DB_SERVER.':'.DB_PORT,DB_USERNAME,DB_PASSWORD);
 if (!$dbh) {
